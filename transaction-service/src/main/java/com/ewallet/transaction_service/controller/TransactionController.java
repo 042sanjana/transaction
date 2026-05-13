@@ -20,44 +20,29 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public ResponseEntity<?> transfer(
-
-            @RequestHeader("Authorization")
-            String token,
-
-            @RequestBody
-            TransferRequest request
+            @RequestHeader("Authorization") String token,
+            @RequestBody TransferRequest request
     ) {
 
         return ResponseEntity.ok(
-
                 transactionService.transfer(
-
                         token,
-
-                        request.getSenderUserId(),
-
-                        request.getReceiverUserId(),
-
+                        request.getSenderEmail(),
+                        request.getReceiverEmail(),
                         request.getAmount(),
-
                         request.getDescription()
                 )
         );
     }
 
-    @GetMapping("/history/{userId}")
+    @GetMapping("/history/{email}")
     public ResponseEntity<?> history(
-            @PathVariable Long userId
+            @PathVariable String email
     ) {
 
         return ResponseEntity.ok(
-                transactionService.getTransactions(userId)
+                transactionService.getTransactions(email)
         );
     }
 
-
-    @GetMapping
-    public List<Transaction> getAllTransactions(Long id) {
-        return transactionService.getTransactions(id);
-    }
 }

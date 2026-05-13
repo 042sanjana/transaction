@@ -21,10 +21,10 @@ public class Transaction {
     private Long id;
 
     @Column(nullable = false)
-    private Long senderUserId;
+    private String senderEmail;
 
     @Column(nullable = false)
-    private Long receiverUserId;
+    private String receiverEmail;
 
     @Column(nullable = false, precision = 19, scale = 4)
     private java.math.BigDecimal amount;

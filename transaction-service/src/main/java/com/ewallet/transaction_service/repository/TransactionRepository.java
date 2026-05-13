@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query("SELECT t FROM Transaction t WHERE t.senderUserId = :userId OR t.receiverUserId = :userId ORDER BY t.createdAt DESC")
-    List<Transaction> findBySenderUserIdOrReceiverUserId( Long userId);
+
+    @Query("SELECT t FROM Transaction t WHERE t.senderEmail = :email OR t.receiverEmail = :email ORDER BY t.createdAt DESC")
+    List<Transaction> findBySenderEmailOrReceiverEmail(@Param("email") String email);
 }

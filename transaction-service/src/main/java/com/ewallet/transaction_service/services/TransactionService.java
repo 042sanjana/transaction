@@ -27,9 +27,9 @@ public class TransactionService {
 
             String token,
 
-            Long senderUserId,
+            String senderEmail,
 
-            Long receiverUserId,
+            String receiverEmail,
 
             BigDecimal amount,
 
@@ -38,8 +38,8 @@ public class TransactionService {
 
         // ✅ Build transaction but DON'T save yet
         Transaction tx = Transaction.builder()
-                .senderUserId(senderUserId)
-                .receiverUserId(receiverUserId)
+                .senderEmail(senderEmail)
+                .receiverEmail(receiverEmail)
                 .amount(amount)
                 .description(description)
                 .status(Transaction.Status.PENDING)
@@ -49,14 +49,14 @@ public class TransactionService {
 
         try {
 
-            walletClient.debit(token, senderUserId, amount);
+            walletClient.debit(token, senderEmail, amount);
 
-            log.info("Debited {} from user {}", amount, senderUserId);
+            log.info("Debited {} from user {}", amount, senderEmail);
 
         } catch (Exception e) {
 
             // Debit itself failed — no money moved, just mark FAILED
-            log.error("Debit failed for user {}: {}", senderUserId, e.getMessage());
+            log.error("Debit failed for user {}: {}", senderEmail, e.getMessage());
 
             tx.setStatus(Transaction.Status.FAILED);
             transactionRepository.save(tx);
@@ -68,25 +68,25 @@ public class TransactionService {
 
         try {
 
-            walletClient.credit(token, receiverUserId, amount);
+            walletClient.credit(token, receiverEmail, amount);
 
-            log.info("Credited {} to user {}", amount, receiverUserId);
+            log.info("Credited {} to user {}", amount, receiverEmail);
 
         } catch (Exception e) {
 
             // ✅ Credit failed — reverse the debit (compensating transaction)
-            log.error("Credit failed for user {}: {}. Reversing debit...", receiverUserId, e.getMessage());
+            log.error("Credit failed for user {}: {}. Reversing debit...", receiverEmail, e.getMessage());
 
             try {
 
-                walletClient.credit(token, senderUserId, amount); // reverse debit
-                log.info("Debit reversed successfully for user {}", senderUserId);
+                walletClient.credit(token, senderEmail, amount); // reverse debit
+                log.info("Debit reversed successfully for user {}", senderEmail);
 
             } catch (Exception rollbackEx) {
 
                 // 🚨 Critical — debit reversed failed, needs manual intervention
                 log.error("CRITICAL: Debit reversal failed for user {} | Amount: {} | Error: {}",
-                        senderUserId, amount, rollbackEx.getMessage());
+                        senderEmail, amount, rollbackEx.getMessage());
             }
 
             tx.setStatus(Transaction.Status.FAILED);
@@ -102,7 +102,7 @@ public class TransactionService {
         return transactionRepository.save(tx);
     }
 
-    public List<Transaction> getTransactions(Long userId) {
-        return transactionRepository.findBySenderUserIdOrReceiverUserId(userId);
+    public List<Transaction> getTransactions(String email) {
+        return transactionRepository.findBySenderEmailOrReceiverEmail(email);
     }
 }

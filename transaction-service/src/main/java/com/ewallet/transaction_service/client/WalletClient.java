@@ -14,29 +14,18 @@ import java.math.BigDecimal;
 )
 public interface WalletClient {
 
-    @PostMapping("/{userId}/credit")
-    Object credit(
-
-            @RequestHeader("Authorization")
-            String token,
-
-            @PathVariable
-            Long userId,
-
-            @RequestParam
-            BigDecimal amount
+    @PostMapping("/{email}/creditOnTransaction")
+    void credit(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String email,
+            @RequestParam BigDecimal amount
     );
 
-    @PostMapping("/{userId}/debit")
-    Object debit(
+    @PostMapping("/{email}/debitOnTransaction")
+    void debit(
 
-            @RequestHeader("Authorization")
-            String token,
-
-            @PathVariable
-            Long userId,
-
-            @RequestParam
-            BigDecimal amount
+            @RequestHeader("Authorization") String token,
+            @PathVariable String email,
+            @RequestParam BigDecimal amount
     );
 }
