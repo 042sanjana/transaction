@@ -1,5 +1,6 @@
 package com.ewallet.transaction_service.controller;
 
+import com.ewallet.transaction_service.entity.Transaction;
 import com.ewallet.transaction_service.request.TransferRequest;
 import com.ewallet.transaction_service.services.TransactionService;
 
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,5 +53,11 @@ public class TransactionController {
         return ResponseEntity.ok(
                 transactionService.getTransactions(userId)
         );
+    }
+
+
+    @GetMapping
+    public List<Transaction> getAllTransactions(Long id) {
+        return transactionService.getTransactions(id);
     }
 }

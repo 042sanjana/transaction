@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 )
 public interface WalletClient {
 
-    @PostMapping("/{userId}/debit")
-    Object debit(
+    @PostMapping("/{userId}/credit")
+    Object credit(
 
             @RequestHeader("Authorization")
             String token,
@@ -27,8 +27,8 @@ public interface WalletClient {
             BigDecimal amount
     );
 
-    @PostMapping("/{userId}/credit")
-    Object credit(
+    @PostMapping("/{userId}/debit")
+    Object debit(
 
             @RequestHeader("Authorization")
             String token,
